@@ -9,8 +9,8 @@
   "keywords": [
     "react",
     "flask",
-	"celery",
-	"redis"
+	  "celery",
+	  "redis"
   ],
   "author": "Luis M. Gato (lmiguelgato@gmail.com)",
   "license": "MIT",
