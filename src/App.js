@@ -1,4 +1,5 @@
 import { Navbar, NavbarBrand } from 'reactstrap'
+import IconLabelButtons from './components/Button'
 import './App.css';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
           <NavbarBrand href="/">Awesome web app using React and Flask.</NavbarBrand>
         </div>
       </Navbar>
+      <IconLabelButtons />
     </div>
   );
 }
