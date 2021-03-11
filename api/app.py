@@ -82,7 +82,6 @@ def index():
 
 @app.route('/longtask', methods=['POST'])
 def longtask():
-    #from IPython.core.debugger import Tracer; Tracer()()
     elementid = request.json['elementid']
     userid = request.json['userid']
     task = long_task.delay(elementid, userid, url_for('event', _external=True))
