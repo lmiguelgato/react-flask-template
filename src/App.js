@@ -1,22 +1,41 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap'
+import { io } from "socket.io-client";
+import { Navbar, NavbarBrand } from 'reactstrap';
 import Button from 'react-bootstrap/Button';
 import './App.css';
 
 
+const socket = io("http://localhost:5000/events");
 class App extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoading: false
+      isLoading: false,
+      userId: ""
     };
+    
+    console.log(socket)
+    socket.on("connect", message => {
+      console.log(message);
+      socket.emit('status', {status: 'I\'m connected!'});
+    })
+    socket.on("userid", message => {
+      console.log(message);
+      this.setState({
+        userId: message.userid
+      })
+    })
+    socket.on("celerystatus", data => {
+      console.log(data);
+    });
   }
 
   handlePredictClick = (event) => {
     this.setState({ isLoading: true });
-    fetch('http://127.0.0.1:5000/longtask', 
+    console.log('test')
+    fetch('http://localhost:5000/longtask', 
       {
         headers: {
           'Accept': 'application/json',
@@ -31,6 +50,10 @@ class App extends Component {
           isLoading: false
         });
       });
+  }
+
+  componentDidMount() {
+    
   }
 
   render() {

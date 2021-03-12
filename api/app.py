@@ -1,4 +1,5 @@
 import os
+from flask_cors import CORS
 import random
 import time
 import uuid
@@ -21,6 +22,7 @@ from flask_socketio import (
 from requests import post
 
 app = Flask(__name__)
+CORS(app)
 app.debug = True
 app.clients = {}
 app.config['SECRET_KEY'] = 'top-secret!'
@@ -36,7 +38,7 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 # app.config['CELERY_RESULT_BACKEND'] = 'rpc://'
 
 # SocketIO
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Initialize Celery
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
@@ -82,6 +84,7 @@ def index():
 
 @app.route('/longtask', methods=['POST'])
 def longtask():
+    print(' i am in longtask route')
     elementid = request.json['elementid']
     userid = request.json['userid']
     task = long_task.delay(elementid, userid, url_for('event', _external=True))
