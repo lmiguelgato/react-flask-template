@@ -27,11 +27,11 @@ function Websocket() {
     });
 
     socket.on('status', data => {
-      console.log('Status', data);
-      if (data === 'Task completed!') {
+      console.log('Status', data.key);
+      if (data.key === 'Task completed!') {
         setIsLoading(false)
       }
-      setStatus(data.data.status)
+      setStatus(data.key)
     });
   }, [])
 
