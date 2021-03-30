@@ -18,7 +18,6 @@ function Websocket() {
   }
 
   useEffect(() => {
-    console.log('IN USE EFFECT');
     const socket = socketIOClient(ENDPOINT);
 
     socket.on('connected', data => {
@@ -28,6 +27,9 @@ function Websocket() {
 
     socket.on('status', data => {
       console.log('Status', data);
+      if (data === 'Task completed!') {
+        setIsLoading(false)
+      }
       console.log(statusList)
       setStatusList(oldStatusList => [...oldStatusList, data.key])
     });
