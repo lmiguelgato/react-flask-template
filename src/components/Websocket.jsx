@@ -15,7 +15,7 @@ function Websocket() {
     console.log('Starting job')
     const data = await axios.post('http://localhost:5000/job', {user_id: userId})
     console.log('Response from API', data);
-    setStatusList([data.data.status])
+    setStatusList(oldStatusList => [...oldStatusList, data.data.status])
   }
 
   useEffect(() => {
@@ -38,7 +38,6 @@ function Websocket() {
 
   return (
     <div>
-      <span>User ID: {userId}</span> <br />
       <Button
       block
       variant="success"

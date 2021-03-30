@@ -2,6 +2,7 @@ import random
 import time
 import uuid
 from requests import post
+from datetime import datetime
 from celery import Celery
 
 from flask import (
@@ -81,7 +82,11 @@ def longtask():
     room = f'uid-{userid}'
     print('--------------- I am in longtask route')
     long_task.delay(room, url_for('status', _external=True, _method='POST'))
-    return make_response(jsonify({'status': 'Started'}))
+    return make_response(
+        jsonify(
+            {'status': f"Started at {datetime.now().strftime('%H:%M:%S')}"}
+            )
+        )
 
 
 @app.route('/status', methods=['POST'])
