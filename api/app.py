@@ -92,7 +92,7 @@ def longtask():
 @app.route('/status', methods=['POST'])
 def status():
     room = request.json['room']
-    print('---------------- EMIT STATUS')
+    print('---------------- EMIT STATUS', room)
     emit('status', {'key': request.json['status']}, room=room, namespace='/')
 
     return jsonify({})
@@ -108,7 +108,9 @@ def events_connect():
     room = f'uid-{userid}'
     print('--------------- Room', room)
     join_room(room)
+    print('what ever')
     emit('connected', {'user_id': userid})
+    print('after emit what ever')
 
 
 @socketio.on('disconnect request')

@@ -8,19 +8,19 @@ const ENDPOINT = 'http://127.0.0.1:5000'
 function Websocket() {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState('unassigned');
-  const [statusList, setStatusList] = useState([])
+  const [status, setStatus] = useState('')
 
   const startJob = async () => {
     setIsLoading(true)
     console.log('Starting job')
     const data = await axios.post('http://localhost:5000/job', {user_id: userId})
     console.log('Response from API', data);
-    setStatusList(oldStatusList => [...oldStatusList, data.data.status])
+    setStatus(data.data.status)
   }
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
-
+    console.log('inside useEffect')
     socket.on('connected', data => {
       console.log('Event', data);
       setUserId(data['user_id'])
@@ -31,8 +31,7 @@ function Websocket() {
       if (data === 'Task completed!') {
         setIsLoading(false)
       }
-      console.log(statusList)
-      setStatusList(oldStatusList => [...oldStatusList, data.key])
+      setStatus(data.data.status)
     });
   }, [])
 
@@ -45,7 +44,7 @@ function Websocket() {
       onClick={!isLoading ? startJob : null}>
       { isLoading ? 'Making prediction' : 'Predict' }
       </Button>
-      {statusList.map((status, index) => (<p key={index}>{status}</p>))}
+      {status}
     </div>
   )
 }
