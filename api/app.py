@@ -1,44 +1,37 @@
-import os
-from flask_cors import CORS
 import random
 import time
 import uuid
+from requests import post
+from celery import Celery
+
 from flask import (
     Flask,
+    make_response,
     request,
-    render_template,
     session,
-    redirect,
     url_for,
     jsonify,
     current_app
-)
-from celery import Celery
+    )
 from flask_socketio import (
     SocketIO,
     emit,
-    disconnect
+    disconnect,
+    join_room,
+    leave_room
 )
-from requests import post
+from flask_cors import CORS
+
 
 app = Flask(__name__)
-CORS(app)
-app.debug = True
 app.clients = {}
+CORS(app)
 app.config['SECRET_KEY'] = 'top-secret!'
-
-# Celery configuration
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Redis
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-# RabbitMQ
-# app.config['CELERY_BROKER_URL'] = 'amqp://localhost://'
-# app.config['CELERY_RESULT_BACKEND'] = 'rpc://'
-
-# SocketIO
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Initialize Celery
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
@@ -46,88 +39,86 @@ celery.conf.update(app.config)
 
 
 @celery.task(bind=True)
-def long_task(self, elementid, userid, url):
+def long_task(self, room, url):
     """Background task that runs a long function with progress reports."""
     verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
     adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
     noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
     message = ''
     total = random.randint(10, 50)
+
     for i in range(total):
         if not message or random.random() < 0.25:
             message = '{0} {1} {2}...'.format(random.choice(verb),
                                               random.choice(adjective),
                                               random.choice(noun))
-        meta = {'current': i, 'total': total, 'status': message,
-                'elementid': elementid, 'userid': userid}
+            print('--------------- ', message)
+        meta = {'current': i,
+                'total': total,
+                'status': message,
+                'room': room}
+
         post(url, json=meta)
         time.sleep(0.5)
 
-    meta = {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'result': 42, 'elementid': elementid, 'userid': userid}
+    meta = {'current': 100,
+            'total': 100,
+            'status': 'Task completed!',
+            'room': room}
     post(url, json=meta)
     return meta
 
 
 @app.route('/clients', methods=['GET'])
 def clients():
-    return jsonify({'clients': app.clients.keys()})
+    print(app.clients)
+    return make_response(jsonify({'clients': list(app.clients.keys())}))
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'GET':
-        return render_template('index.html')
-
-    return redirect(url_for('index'))
-
-
-@app.route('/longtask', methods=['POST'])
+@app.route('/job', methods=['POST'])
 def longtask():
-    print(' i am in longtask route')
-    elementid = request.json['elementid']
-    userid = request.json['userid']
-    task = long_task.delay(elementid, userid, url_for('event', _external=True))
-    return jsonify({}), 202
+    userid = request.json['user_id']
+    room = f'uid-{userid}'
+    print('--------------- I am in longtask route')
+    long_task.delay(room, url_for('status', _external=True, _method='POST'))
+    return make_response(jsonify({'x': 1}))
 
 
-@app.route('/event/', methods=['POST'])
-def event():
-    userid = request.json['userid']
-    data = request.json
-    ns = app.clients.get(userid)
-    if ns and data:
-        socketio.emit('celerystatus', data, namespace=ns)
-        return 'ok'
-    return 'error', 404
+@app.route('/status', methods=['POST'])
+def status():
+    room = request.json['room']
+    print('---------------- EMIT STATUS')
+    emit('status', {'key': request.json['status']}, room=room, namespace='/')
+
+    return jsonify({})
 
 
-@socketio.on('status', namespace='/events')
-def events_message(message):
-    emit('status', {'status': message['status']})
+@socketio.on('connect')
+def events_connect():
+    userid = str(uuid.uuid4())
+    session['userid'] = userid
+    print(request.namespace)
+    current_app.clients[userid] = request.namespace
+    print('--------------- Client connected! Assigned user id', userid)
+    room = f'uid-{userid}'
+    print('--------------- Room', room)
+    join_room(room)
+    emit('connected', {'user_id': userid})
 
 
-@socketio.on('disconnect request', namespace='/events')
+@socketio.on('disconnect request')
 def disconnect_request():
     emit('status', {'status': 'Disconnected!'})
     disconnect()
 
 
-@socketio.on('connect', namespace='/events')
-def events_connect():
-    userid = str(uuid.uuid4())
-    session['userid'] = userid
-    current_app.clients[userid] = request.namespace
-    emit('userid', {'userid': userid})
-    emit('status', {'status': 'Connected user', 'userid': userid})
-
-
-@socketio.on('disconnect', namespace='/events')
+@socketio.on('disconnect')
 def events_disconnect():
     del current_app.clients[session['userid']]
+    room = f"uid-{session['userid']}"
+    leave_room(room)
     print('Client %s disconnected' % session['userid'])
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    socketio.run(app)
+    socketio.run(app, debug=True)
