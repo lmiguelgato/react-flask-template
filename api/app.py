@@ -81,7 +81,7 @@ def longtask():
     room = f'uid-{userid}'
     print('--------------- I am in longtask route')
     long_task.delay(room, url_for('status', _external=True, _method='POST'))
-    return make_response(jsonify({'x': 1}))
+    return make_response(jsonify({'status': 'Started'}))
 
 
 @app.route('/status', methods=['POST'])

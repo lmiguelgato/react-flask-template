@@ -14,7 +14,8 @@ function Websocket() {
     setIsLoading(true)
     console.log('Starting job')
     const data = await axios.post('http://localhost:5000/job', {user_id: userId})
-    setStatusList([])
+    console.log('Response from API', data);
+    setStatusList([data.data.status])
   }
 
   useEffect(() => {
