@@ -29,12 +29,13 @@ function Websocket() {
 
     socket.on('status', data => {
       console.log('Status', data.status);
-      if (data.current === 100) {
+      if (data.current === data.total) {
         setIsLoading(false)
         setProgress(0)
+      } else {
+        setProgress(Math.floor(100*data.current/data.total))
+        setStatus(data.status)
       }
-      setProgress(Math.floor(100*data.current/data.total))
-      setStatus(data.status)
     });
   }, [])
 
