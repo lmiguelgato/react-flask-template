@@ -18,10 +18,10 @@ For example, run: `virtualenv -p python3.8 venv && source venv/bin/activate`
 For example, if you are on Linux or Mac, execute `./run-redis.sh` to install and/or launch a private copy. If running this bash script for the first time, execution permission might be needed: `chmod +x run-redis.sh`
 
 3. Start a Celery worker by running:\
-`celery -A app.celery worker --loglevel=info`
+`celery -A main.celery worker --loglevel=info`
 
 4. Start the Flask application by running:\
-`python app.py`
+`python main.py`
 
 A development server for the API will be running on [http://localhost:5000](http://localhost:5000), and it will reload if you make edits.
 
