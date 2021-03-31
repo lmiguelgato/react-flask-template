@@ -14,6 +14,7 @@ colorama==0.4.3
 contextlib2==0.6.0
 distlib==0.3.0
 distro==1.4.0
+flake8==3.9.0
 Flask==1.1.2
 Flask-Cors==3.0.10
 Flask-SocketIO==5.0.1
@@ -31,6 +32,7 @@ pep517==0.8.2
 progress==1.5
 prompt-toolkit==3.0.18
 pyparsing==2.4.6
+python-dotenv==0.15.0
 python-engineio==4.0.1
 python-socketio==5.1.0
 pytoml==0.1.21
