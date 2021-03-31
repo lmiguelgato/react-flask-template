@@ -23,7 +23,7 @@ For example, if you are on Linux or Mac, execute `./run-redis.sh` to install and
 4. Start the Flask application by running:\
 `python app.py`
 
-The API will be launched at [http://localhost:5000](http://localhost:5000)
+A development server for the API will be running on [http://localhost:5000](http://localhost:5000), and it will reload if you make edits.
 
 ## Frontend
 
