@@ -31,7 +31,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## API
 
-This repository contains some example code from [this project](https://github.com/jwhelland/flask-socketio-celery-example), which in turn is based on [this project](https://github.com/miguelgrinberg/flask-celery-example).  
+Although completely redesigned, this project is inspired on some example code from [this project](https://github.com/jwhelland/flask-socketio-celery-example), which in turn is based on [this project](https://github.com/miguelgrinberg/flask-celery-example).  
 
 To setup the API, make sure to `cd api` and then:
 
@@ -45,7 +45,7 @@ For example, run: `virtualenv -p python3.8 venv && source venv/bin/activate`
 
 2. Start a local Redis server.
 
-For example, if you are on Linux or Mac, execute `./run-redis.sh` to install and launch a private copy.
+For example, if you are on Linux or Mac, execute `./run-redis.sh` to install and launch a private copy. If running this bash script for the first time, execution permission might be needed: `chmod +x run-redis.sh`
 
 3. Start a Celery worker by running:
 
