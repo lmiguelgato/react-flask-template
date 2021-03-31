@@ -38,5 +38,5 @@ To setup the API, make sure to `cd api` and then:
 0. Create a virtual environment and activate it. For example, run: `virtualenv venv && source venv/bin/activate`
 1. Install the requirements: `pip install -r requirements.txt`
 2. Start a local Redis server (if you are on Linux or Mac, execute `./run-redis.sh` to install and launch a private copy)
-3. Start a Celery worker by running: `celery worker -A app.celery --loglevel=info`
+3. Start a Celery worker by running: `celery -A app.celery worker --loglevel=info`
 4. Start the Flask application by running: `python app.py`. The API will be launched at [http://localhost:5000](http://localhost:5000)
