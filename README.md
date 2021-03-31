@@ -31,7 +31,7 @@ To run the web app, make sure to `cd src/` and then:
 
 ### `yarn install`
 
-Install all Node JS dependencies.
+Install required Node.js modules.
 
 ### `yarn start`
 
