@@ -13,22 +13,17 @@ function Websocket() {
 
   const startJob = async () => {
     setIsLoading(true)
-    console.log('Starting job')
     const data = await axios.post('http://localhost:5000/job', {user_id: userId})
-    console.log('Response from API', data);
     setStatus(data.data.status)
   }
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
-    console.log('inside useEffect')
     socket.on('connected', data => {
-      console.log('Event', data);
       setUserId(data['user_id'])
     });
 
     socket.on('status', data => {
-      console.log('Status', data.status);
       if (data.current === data.total) {
         setIsLoading(false)
         setProgress(0)

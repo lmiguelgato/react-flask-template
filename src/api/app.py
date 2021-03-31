@@ -1,4 +1,5 @@
 import random
+import logging
 import time
 import uuid
 from requests import post
@@ -23,6 +24,8 @@ from flask_socketio import (
 )
 from flask_cors import CORS
 
+
+logger = logging.getLogger("api")
 
 app = Flask(__name__)
 app.clients = {}
@@ -72,7 +75,6 @@ def long_task(room, url):
 
 @app.route('/clients', methods=['GET'])
 def clients():
-    print(app.clients)
     return make_response(jsonify({'clients': list(app.clients.keys())}))
 
 
@@ -80,7 +82,6 @@ def clients():
 def longtask():
     userid = request.json['user_id']
     room = f'uid-{userid}'
-    print('--------------- I am in longtask route')
     long_task.delay(room, url_for('status', _external=True, _method='POST'))
     return make_response(
         jsonify(
@@ -92,7 +93,6 @@ def longtask():
 @app.route('/status', methods=['POST'])
 def status():
     room = request.json['room']
-    print('---------------- EMIT STATUS', room)
     emit('status', request.json, room=room, namespace='/')
 
     return jsonify({})
@@ -102,15 +102,11 @@ def status():
 def events_connect():
     userid = str(uuid.uuid4())
     session['userid'] = userid
-    print(request.namespace)
     current_app.clients[userid] = request.namespace
-    print('--------------- Client connected! Assigned user id', userid)
+    logger.info('Client connected! Assigned user id %s.', userid)
     room = f'uid-{userid}'
-    print('--------------- Room', room)
     join_room(room)
-    print('what ever')
     emit('connected', {'user_id': userid})
-    print('after emit what ever')
 
 
 @socketio.on('disconnect request')
@@ -124,7 +120,7 @@ def events_disconnect():
     del current_app.clients[session['userid']]
     room = f"uid-{session['userid']}"
     leave_room(room)
-    print('Client %s disconnected' % session['userid'])
+    logger.info('Client %s disconnected.', session['userid'])
 
 
 if __name__ == '__main__':
