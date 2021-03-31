@@ -9,6 +9,7 @@ function Websocket() {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState('unassigned');
   const [status, setStatus] = useState('')
+  const [progress, setProgress] = useState(0)
 
   const startJob = async () => {
     setIsLoading(true)
@@ -27,11 +28,13 @@ function Websocket() {
     });
 
     socket.on('status', data => {
-      console.log('Status', data.key);
-      if (data.key === 'Task completed!') {
+      console.log('Status', data.status);
+      if (data.current === 100) {
         setIsLoading(false)
+        setProgress(0)
       }
-      setStatus(data.key)
+      setProgress(Math.floor(100*data.current/data.total))
+      setStatus(data.status)
     });
   }, [])
 
@@ -42,7 +45,7 @@ function Websocket() {
       variant="success"
       disabled={isLoading}
       onClick={!isLoading ? startJob : null}>
-      { isLoading ? 'Making prediction' : 'Predict' }
+      { isLoading ? 'Making prediction (' + progress + ' %)' : 'Predict' }
       </Button>
       {status}
     </div>

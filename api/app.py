@@ -50,10 +50,10 @@ def long_task(room, url):
 
     for i in range(total):
         if not message or random.random() < 0.25:
-            message = '{0} {1} {2}...'.format(random.choice(verb),
-                                              random.choice(adjective),
-                                              random.choice(noun))
-            print('--------------- ', message)
+            message = f'{random.choice(verb)} \
+                {random.choice(adjective)} \
+                {random.choice(noun)} ...'
+
         meta = {'current': i,
                 'total': total,
                 'status': message,
@@ -64,7 +64,7 @@ def long_task(room, url):
 
     meta = {'current': 100,
             'total': 100,
-            'status': 'Task completed!',
+            'status': 'Done.',
             'room': room}
     post(url, json=meta)
     return meta
@@ -93,7 +93,7 @@ def longtask():
 def status():
     room = request.json['room']
     print('---------------- EMIT STATUS', room)
-    emit('status', {'key': request.json['status']}, room=room, namespace='/')
+    emit('status', request.json, room=room, namespace='/')
 
     return jsonify({})
 
