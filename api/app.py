@@ -50,9 +50,9 @@ def long_task(room, url):
 
     for i in range(total):
         if not message or random.random() < 0.25:
-            message = f'{random.choice(verb)} \
-                {random.choice(adjective)} \
-                {random.choice(noun)} ...'
+            message = "{0} {1} {2} ...".format(random.choice(verb),
+                                               random.choice(adjective),
+                                               random.choice(noun))
 
         meta = {'current': i,
                 'total': total,
