@@ -4,7 +4,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Frontend
 
-In the project directory, you can run:
+To run the web app, make sure to `cd src/` and then:
+
+### `yarn install`
+
+Install all Node JS dependencies.
 
 ### `yarn start`
 
@@ -33,26 +37,21 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 Although completely redesigned, this project is inspired on some example code from [this project](https://github.com/jwhelland/flask-socketio-celery-example), which in turn is based on [this project](https://github.com/miguelgrinberg/flask-celery-example).  
 
-To setup the API, make sure to `cd api` and then:
+To setup the API, make sure to `cd src/api/` and then:
 
-0. Create a virtual environment and activate it.
-
+0. Create a virtual environment and activate it.\
 For example, run: `virtualenv -p python3.8 venv && source venv/bin/activate`
 
-1. Install the requirements:
-
+1. Install the requirements:\
 `pip install -r requirements.txt`
 
-2. Start a local Redis server.
-
+2. Start a local Redis server.\
 For example, if you are on Linux or Mac, execute `./run-redis.sh` to install and launch a private copy. If running this bash script for the first time, execution permission might be needed: `chmod +x run-redis.sh`
 
-3. Start a Celery worker by running:
-
+3. Start a Celery worker by running:\
 `celery -A app.celery worker --loglevel=info`
 
-4. Start the Flask application by running:
-
+4. Start the Flask application by running:\
 `python app.py`
 
 The API will be launched at [http://localhost:5000](http://localhost:5000)
