@@ -1,5 +1,4 @@
 import random
-import logging
 import time
 import uuid
 from requests import post
@@ -24,8 +23,6 @@ from flask_socketio import (
 )
 from flask_cors import CORS
 
-
-logger = logging.getLogger("api")
 
 app = Flask(__name__)
 app.clients = {}
@@ -103,7 +100,7 @@ def events_connect():
     userid = str(uuid.uuid4())
     session['userid'] = userid
     current_app.clients[userid] = request.namespace
-    logger.info('Client connected! Assigned user id %s.', userid)
+    app.logger.info('Client connected! Assigned user id %s.', userid)
     room = f'uid-{userid}'
     join_room(room)
     emit('connected', {'user_id': userid})
@@ -120,7 +117,7 @@ def events_disconnect():
     del current_app.clients[session['userid']]
     room = f"uid-{session['userid']}"
     leave_room(room)
-    logger.info('Client %s disconnected.', session['userid'])
+    app.logger.info('Client %s disconnected.', session['userid'])
 
 
 if __name__ == '__main__':
