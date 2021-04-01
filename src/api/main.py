@@ -42,9 +42,9 @@ celery.conf.update(app.config)
 @celery.task()
 def long_task(room, url):
     """Background task that runs a long function with progress reports."""
-    verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
-    adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
-    noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
+    verb = ['Starting', 'Running', 'Updating', 'Loading', 'Checking']
+    adjective = ['latest', 'optimized', 'lightweight', 'efficient', 'core']
+    noun = ['neural network', 'backpropagation', 'gradient descent', 'regularization', 'weights']
     message = ''
     total = random.randint(10, 50)
 
